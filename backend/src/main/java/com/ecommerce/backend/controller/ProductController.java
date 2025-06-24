@@ -35,7 +35,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,5 +56,10 @@ public class ProductController {
         Optional<Product> product = productRepository.findById(id);
         return product.map(ResponseEntity::ok)
                       .orElse(ResponseEntity.notFound().build());
+    }
+    @GetMapping("/search")
+    public ResponseEntity<List<Product>> searchProducts(@RequestParam("q") String query) {
+        List<Product> products = productRepository.findByNameContainingIgnoreCase(query);
+        return ResponseEntity.ok(products);
     }
 }
