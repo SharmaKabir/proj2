@@ -1,31 +1,75 @@
-// filepath: /Users/kabirsharma/Desktop/projects/proj2/backend/src/main/java/com/ecommerce/backend/config/SecurityConfig.java
+
+// package com.ecommerce.backend.config;
+
+// import lombok.RequiredArgsConstructor;
+// import org.springframework.context.annotation.Bean;
+// import org.springframework.context.annotation.Configuration;
+// import org.springframework.security.authentication.AuthenticationProvider;
+// import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+// import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+// import org.springframework.security.config.http.SessionCreationPolicy;
+// import org.springframework.security.web.SecurityFilterChain;
+// import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+// @Configuration
+// @EnableWebSecurity
+// @RequiredArgsConstructor
+// public class SecurityConfig {
+
+//     private final JwtAuthFilter jwtAuthFilter;
+//     private final AuthenticationProvider authenticationProvider;
+
+//     @Bean
+//     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//         http
+//             .csrf(csrf -> csrf.disable())
+//             .authorizeHttpRequests(auth -> auth
+//                 .requestMatchers("/api/auth/**").permitAll()  // Make sure this line exists
+//                 .requestMatchers("/api/products/**", "/api/categories/**").permitAll()
+//                 .anyRequest().authenticated()
+//             )
+//             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//             .authenticationProvider(authenticationProvider)
+//             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
+//         return http.build();
+//     }
+// }
+
 package com.ecommerce.backend.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import static org.springframework.security.config.Customizer.withDefaults;
-
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final JwtAuthFilter jwtAuthFilter;
+    private final AuthenticationProvider authenticationProvider;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            // Disable CSRF protection, common for stateless REST APIs
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                // Allow all requests to /api/** to be publicly accessible
-                .requestMatchers("/api/**").permitAll()
-                // All other requests should be authenticated
+                // Allow public access to auth and product endpoints
+                .requestMatchers("/api/auth/**", "/api/products/**", "/api/categories/**").permitAll()
+                // All other requests must be authenticated
                 .anyRequest().authenticated()
             )
-            // If you want to keep the default login form for other routes
-            .formLogin(withDefaults()); 
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authenticationProvider(authenticationProvider)
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 }
