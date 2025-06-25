@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-
+import java.util.stream.Collectors;
 @Service
 public class JwtService {
     // You should generate a strong 256-bit secret key and put it in your application.properties
@@ -25,8 +25,22 @@ public class JwtService {
         return extractClaim(token, Claims::getSubject);
     }
 
+    // public String generateToken(UserDetails userDetails) {
+    //     return Jwts.builder()
+    //         .setSubject(userDetails.getUsername())
+    //         .setIssuedAt(new Date(System.currentTimeMillis()))
+    //         .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // 24 hours
+    //         .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+    //         .compact();
+    // }
     public String generateToken(UserDetails userDetails) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("roles", userDetails.getAuthorities().stream()
+                .map(grantedAuthority -> grantedAuthority.getAuthority())
+                .collect(Collectors.toList()));
+
         return Jwts.builder()
+            .setClaims(claims)
             .setSubject(userDetails.getUsername())
             .setIssuedAt(new Date(System.currentTimeMillis()))
             .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // 24 hours

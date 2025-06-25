@@ -47,7 +47,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
+import org.springframework.http.HttpMethod;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -57,13 +57,30 @@ public class SecurityConfig {
     private final AuthenticationProvider authenticationProvider;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+// public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//     http
+//         .csrf(csrf -> csrf.disable())
+//         .authorizeHttpRequests(auth -> auth
+//             // Allow all OPTIONS requests for CORS preflight
+//             .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+//             // Allow public access to auth and product endpoints
+//             .requestMatchers("/api/auth/**", "/api/products/**", "/api/categories/**").permitAll()
+//             // All other requests must be authenticated
+//             .anyRequest().authenticated()
+//         )
+//         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//         .authenticationProvider(authenticationProvider)
+//         .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
+//     return http.build();
+// }
+ public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                // Allow public access to auth and product endpoints
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/api/auth/**", "/api/products/**", "/api/categories/**").permitAll()
-                // All other requests must be authenticated
+                .requestMatchers("/api/admin/**").hasRole("ADMIN") // Secure admin routes
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

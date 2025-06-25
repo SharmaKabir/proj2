@@ -11,48 +11,26 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-@Data
-@Builder // A helper to build objects, great for registration
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "users")
-public class User implements UserDetails {
-
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
-    @Column(unique = true)
+
     private String email;
+
     @Column(name = "password_hash")
-    private String password;
+    private String passwordHash;
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
+    private String role;
 
-    public enum Role {
-        ROLE_USER,
-        ROLE_ADMIN
-    }
-
-    // --- Methods from UserDetails interface ---
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        // This tells Spring Security what role the user has.
-        return List.of(new SimpleGrantedAuthority(role.name()));
-    }
-
-    @Override
-    public String getUsername() {
-        // For us, the username is the email.
-        return email;
-    }
-
-    // For this app, we can just return true for these.
-    @Override public boolean isAccountNonExpired() { return true; }
-    @Override public boolean isAccountNonLocked() { return true; }
-    @Override public boolean isCredentialsNonExpired() { return true; }
-    @Override public boolean isEnabled() { return true; }
+    @Column(name = "created_at")
+    private java.sql.Timestamp createdAt;
 }
