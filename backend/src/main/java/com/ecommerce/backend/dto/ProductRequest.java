@@ -10,4 +10,5 @@ public class ProductRequest {
     private BigDecimal price;
     private String imageUrl;
     private Long categoryId; // We will send the ID of the category
+    private Integer stockQuantity;
 }

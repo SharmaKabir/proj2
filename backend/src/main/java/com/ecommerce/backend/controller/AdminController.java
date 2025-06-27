@@ -229,7 +229,7 @@ public class AdminController {
         return ResponseEntity.ok(allOrders);
     }
 
-    @PostMapping("/products")
+   @PostMapping("/products")
     public ResponseEntity<Product> addProduct(@RequestBody ProductRequest productRequest) {
         Category category = categoryRepository.findById(productRequest.getCategoryId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
@@ -240,13 +240,14 @@ public class AdminController {
                 .price(productRequest.getPrice())
                 .imageUrl(productRequest.getImageUrl())
                 .category(category)
+                .stockQuantity(productRequest.getStockQuantity() != null ? productRequest.getStockQuantity() : 0) // Set stock
                 .build();
 
         Product savedProduct = productRepository.save(newProduct);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
     }
 
-    @PutMapping("/products/{id}")
+   @PutMapping("/products/{id}")
     public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody ProductRequest productRequest) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found with id: " + id));
@@ -259,6 +260,7 @@ public class AdminController {
         product.setPrice(productRequest.getPrice());
         product.setImageUrl(productRequest.getImageUrl());
         product.setCategory(category);
+        product.setStockQuantity(productRequest.getStockQuantity()); // Update stock
 
         final Product updatedProduct = productRepository.save(product);
         return ResponseEntity.ok(updatedProduct);
