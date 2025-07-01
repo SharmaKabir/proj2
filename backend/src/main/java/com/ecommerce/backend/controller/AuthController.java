@@ -339,7 +339,7 @@ public class AuthController {
                 .name(request.getName())
                 .email(request.getEmail())
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
-                .role("ROLE_USER") // <-- Ensure new users get ROLE_USER
+                .role("ROLE_USER") // <--  ROLE_USER
                 .build();
 
         userRepository.save(user);

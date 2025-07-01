@@ -236,6 +236,7 @@ public class AdminController {
 
         Product newProduct = Product.builder()
                 .name(productRequest.getName())
+                .brand(productRequest.getBrand())
                 .description(productRequest.getDescription())
                 .price(productRequest.getPrice())
                 .imageUrl(productRequest.getImageUrl())
@@ -256,6 +257,7 @@ public class AdminController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
 
         product.setName(productRequest.getName());
+        product.setBrand(productRequest.getBrand());
         product.setDescription(productRequest.getDescription());
         product.setPrice(productRequest.getPrice());
         product.setImageUrl(productRequest.getImageUrl());
